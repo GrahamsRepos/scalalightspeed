@@ -34,4 +34,58 @@ val interpolatedString = s"The meaning of life is $meaningOfLife"
 val anExpression = 2 + 3
 ```
 - Scala is based on composition not instructions , everything resolves to a value
-- Continue from 6:04
+- Even if statements in scala resolve to a value (example similar to ternary operator)
+```scala
+val ifExpression = if (meaningOfLife > 43) 56 else 999 // Same as meaningOfLife > 43 ? 56 : 999 in JS
+```
+- If expressions can be chained (Note we are not executing code based on a condition , we are resolving to a value based on condition)
+```scala
+  val chainedIfExpression = 
+    if (meaningOfLife > 43) 56
+    else if (meaningOfLife  < 0 ) -2
+    else if(meaningOfLife > 999) 78
+    else 0
+```
+- There are also code block expressions defined between {} tags
+ * Inside a code block you can add "local definitions"
+ * The value of the last expression in a code block is what's returned
+ * The compiler can infer the type of the code-block
+```scala
+  val aCodeBlock = {
+    val aLocalValue = 67
+    aLocalValue + 3 // This is returned
+  }
+```
+- Functions , are defined by the def keyword: 
+```scala
+  def myFunction(x: Int, y: String): String = {
+    x+" "+y
+  }
+```
+- Recursive scala functions can depend on their own type
+```scala
+  def factorial(n: Int):Int = {
+    if(n < 1) n
+    else n * factorial(n - 1)
+  }
+// factorial(5) -> 5 * factorial(4) -> onto stack
+// factorial(4) -> 4 * factorial(3) -> onto stack
+// factorial(3) -> 3 * factorial(2) -> onto stack
+// factorial(2) -> 2 * factorial(1) -> onto stack
+// factorial(1) -> 1 -> end of stack
+```
+- Loops are discouraged in scala, recursion is preferred 
+```scala
+  def forRecursive(current: Int, end:Int): Unit={
+  if(current <= end){
+    println(current)
+    forRecursive(current + 1, end)
+  }
+}
+```
+- In scala the Unit type = "no meaningful value" and is equivalent to void
+- The unit type is the type for any "side effects"
+```scala
+println("some value") // The return type of this is "Unit"
+```
+## Part 3 - Object orientated programming

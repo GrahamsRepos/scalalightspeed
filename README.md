@@ -5,4 +5,6 @@
 
 ### Part 1 - Setup ☑️
 
-### Part 2 - Basics
+### Part 2 - Basics ☑️
+
+### Part 3 - Object-orientated programming
