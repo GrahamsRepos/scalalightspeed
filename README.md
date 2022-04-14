@@ -7,4 +7,6 @@
 
 ### Part 2 - Basics ☑️
 
-### Part 3 - Object-orientated programming
+### Part 3 - Object-orientated programming ☑️
+
+### Part 4 - Functional Programming in Scala
