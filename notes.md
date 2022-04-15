@@ -1,3 +1,11 @@
+# Notes
+- [2. Basics](#2)
+- [3. Object Orientation](#3)
+- [4. Functional Programming](#4)
+- [5. Pattern Matching](#5)
+- [6. Advanced](#6)
+
+<a id="2"></a>
 ## Part 2 - Basics
 - [Code](src/main/scala/com/rockthejvm/Basics.scala)
 - An app trait can be used to quickly turn objects into executable programs 
@@ -88,7 +96,7 @@ val ifExpression = if (meaningOfLife > 43) 56 else 999 // Same as meaningOfLife 
 ```scala
 println("some value") // The return type of this is "Unit"
 ```
-
+<a id="3"></a>
 ## Part 3 - Object orientated programming
 - [Code](src/main/scala/com/rockthejvm/ObjectOrientation.scala)
 - Scala classes allow you to create an instance in memory using the new keyword
@@ -280,7 +288,8 @@ val reversedList = myList.reverse // New copy of the object
 ```
 - Extending using the App object
  * Inherits the static main method of the App trait object
-
+ 
+<a id="4"></a>
 ## Part 4 - Functional Programming
 - [Code](src/main/scala/com/rockthejvm/FunctionalProgramming.scala)
 - Apply method allows an instance of a class to be invoked as a function
@@ -424,7 +433,7 @@ val reversedList = myList.reverse // New copy of the object
   "SomeOneElse" -> 12345897 // two member tuple shorthand
 )
 ```
-
+<a id="5"></a>
 ## Part 5 - Pattern Matching
 - [Code](src/main/scala/com/rockthejvm/PatternMatching.scala)
 - Switch expression
@@ -490,5 +499,130 @@ var matchByType = (argument:Any) =>{
   println(matchByType(List("abc",3,"cde")))
   println(matchByType(List(1,2,3)))
 ```
+<a id="6"></a>
+## Part 6 - Advanced
+- [code](src/main/scala/com/rockthejvm/Advanced.scala)
+### Lazy evaluation
+- An expression is not evaluated until it's first use
+- Non lazy values (code blocks) are evaluated immediately
+```scala
+  // lazy evaluation
+  lazy val aLazyValue = 2
+  val valueWithSideEffect = { 
+    // The line is printed because value is evaluated at runtime
+  println("I am not lazy") // side effect
+  43
+  } 
+  // vs.
+  lazy val lazyValueWithSideEffect = {
+  println("I am very lazy") // side effect - not executed until the first use
+  43
+  }
+  println("This is printed")
+  lazyValueWithSideEffect.toString // Only now the lazyVal is used
+```
+### pseudo-collections Option and Try
+- Used with unsafe methods
+- Option (pseudo collection)
+  * Can return Some (if value is not null)
+  * Can return None (if value is null)
+  * match against Option to handle nulls
+```scala
+  def methodWhichCanReturnNull():String = if (Math.random() > 0.5) "Hello, scala" else null
+  val range = 1 to 50
+  range.foreach(_=>{
+    if (methodWhichCanReturnNull()== null){
+      println("was null")
+      // some defensive code in case the method returns null
+    } else {
+      println("not null")
+    }
+    // using the option type
+    val anOption = Option(methodWhichCanReturnNull()) // this returns Some(value) or None if the value is null
+  })
+  range.foreach(_=>{
+    Option(methodWhichCanReturnNull()) match {
+      case Some(number) => println("some number was returned")
+      case None => println("a null was returned")
+    }
+  })
+```
+- Try (pseudo collection)
+  * Guards against methods that can throw exceptions
+  * A Try resolves to ether Success(value) or Failure
+  * Exception handling using match
+```scala
+    val range = 1 to 50
+    def aMethodThatCanThrow():String = if (Math.random() > 0.5) "Hello, scala" else throw new Exception
+    // normal try catch
+    range.foreach(_=>{
+      try{
+        aMethodThatCanThrow()
+        println("No exception throws")
+      }catch{
+        case e:Exception => println("Exception thrown")
+      }
+    })
+    // The Try collection
+    range.foreach(_=>{
+      Try(aMethodThatCanThrow()) match{
+        case Success(value) => "No exception thrown"
+        case Failure(exception) => "Exception was thrown"
+      }
+    })
+```
+
+### Asynchronous programming (threads)
+- Evaluate something on another thread
+- Uses the Future pseudo collection
+- A future requires an execution context
+- Required thread pool import scala.concurrent.ExecutionContext.Implicits.global
+- Written as Future {codeblock}
+- Futures are composable using map , flatmap , filter
+- Future will die if main thread exists before future is complete
+```scala
+    val aFuture = Future{
+      println("loading....")
+      Thread.sleep(1000) // future thread
+      println("I have computed a value")
+      67
+    }
+    Thread.sleep(500) // main thread - if Thread.sleep(500) then main thread will terminate before furture is finished
+    // Future is a collection that contains a value once it's evaluated
+    // a future is composable with map , flatmap and filter
+    // Not the right way to wait for a future , just an example
+    val waitingForFuture:(Future[Any])=>Unit = (future:Future[Any]) => {
+      future.value match {
+        case Some(value) => println(s"The future has resolved to $value")
+        case _ => {
+          Thread.sleep(100) // main thread
+          println("Waiting for the future to resolve to a value")
+          waitingForFuture(future)
+        }
+      }
+    }
+    waitingForFuture(aFuture)
+```
+### Implicits Basics
+- Use case 1 - Implicit arguments
+  * The compiler will match an implicit val to the implicit function argument
+```scala
+  def aMethodWithImplicitArgs(implicit arg: Int) = arg + 1
+  implicit val myImplicitInt = 46
+  println(aMethodWithImplicitArgs) 
+```
+- Use case 2 - Implicit conversions
+  * Allows you to create wrappers that extends the methods available on types
+  * Example add isEven() to Int type
+```scala
+  implicit class MyRichInteger(n: Int){
+  def isEven() = n % 2 == 0
+}
+println(42.isEven()) // Compiler now looks for an implicit class with the method isEven given an int
+// The compiler basically figures out that this has to be new MyRichInteger(42).isEven()// Compiler now looks for an implicit class with the method isEven given an int
+```
+
+
+
 
 
