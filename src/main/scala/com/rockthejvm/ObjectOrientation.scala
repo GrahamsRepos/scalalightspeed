@@ -45,7 +45,6 @@ object ObjectOrientation extends App {
   // Operstors in scala are actually methods
   val basicMath = 1 + 2 // The + is a method belonging to the type Int
   val anotherBasicMath = 1.+(2) // Is equivalent to new Int(1).+(2)
-  val anotherBasicMath2 = new Int().+(2)
 
   // Anonymous class for implementing traits on the spot
   class dinosaur extends Carnivore {

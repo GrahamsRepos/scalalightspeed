@@ -88,6 +88,7 @@ val ifExpression = if (meaningOfLife > 43) 56 else 999 // Same as meaningOfLife 
 ```scala
 println("some value") // The return type of this is "Unit"
 ```
+
 ## Part 3 - Object orientated programming
 - [Code](src/main/scala/com/rockthejvm/ObjectOrientation.scala)
 - Scala classes allow you to create an instance in memory using the new keyword
@@ -279,3 +280,151 @@ val reversedList = myList.reverse // New copy of the object
 ```
 - Extending using the App object
  * Inherits the static main method of the App trait object
+
+## Part 4 - Functional Programming
+- [Code](src/main/scala/com/rockthejvm/FunctionalProgramming.scala)
+- Apply method allows an instance of a class to be invoked as a function
+```scala
+  class Person(name: String){
+    def apply(age:Int): Unit = println(s"I have aged $age years")
+  }
+  val bob = new Person("bob")
+  bob.apply(43)
+  bob(43) // same as calling apply
+```
+- The JVM doesn't know what a function is as a first class citizen
+- Functional Programming, we want to
+  * All functions are instances of the FunctionX type trait
+  * compose functions
+  * pass functions as arguments
+  * return functions as results
+  - Scala models functions using a trait
+  * Scala has traits called FunctionX from 1 - 22 (22 max arguments)
+- def is used to define class methods
+```scala
+  //Function1[argumentType, ReturnType]
+  val simpleIncrementer = new Function1[Int, Int]{
+    override def apply(arg:Int):Int = arg + 1
+  }
+```
+### Syntactic sugars
+- Arrow functions
+```scala
+  val doubler: Function1[Int,Int] = (x:Int) => 2 * x
+  // equivalent to:
+  val doubler1  = new Function1[Int, Int] {
+    override def apply(x:Int) = 2 * x
+  }
+ ```
+- Function[Int, Int] type can be written as Int => Int
+```scala
+  val doubler : Int => Int = (x:Int) => 2 * x
+```
+- You can omit the function type altogether
+```scala
+ val doubler = (x:Int) => 2 * x // compiler infers type of function
+```
+### Higher order functions
+- Allows you to
+  * Take functions as arguments 
+  * return functions as results
+- map is a higher order method
+```scala
+  val aMappedList = List(1,2,3).map((x)=>x+1)
+```
+- flatMapped lists
+```scala
+  val aFlatMappedList = List(1,2,3).flatMap((x)=>List(x, 2 * x))
+  println(aFlatMappedList) // List(1,2,2,4,3,6) // Concatenates the lists generated for each map result
+```
+- Alternative Map syntax
+```scala
+ val aMappedList = List(1,2,3).map{x => 
+  x+1
+}
+```
+- Filtered Lists
+```scala
+  val aFilteredList = List(1,2,3,4,5).filter(x=>x <= 2) // returns List(3,4,5)
+```
+- Underscore shorthand notation
+```scala
+  val aFilteredList2 = List(1,2,3,4,5).filter(_<=2) // _ <=2 is equivalent to  (x) => x <= 2
+```
+- Map , Flatmap and Filter can be chained because the all return lists
+```scala
+  val myList:List[Int] = List(1,2,3,4,5).filter(_>=1).map(_*2).flatMap(x=>List(x, x*2))
+  val allPairs = List(1,2,3).flatMap(number => List("a","b","c").map(letter=>s"$number - $letter"))
+  println(allPairs)
+```
+- For comprehensions (More human readable chains)
+  * it is not a for loop , it is an expression
+  * a for comprehension is deconstructed to a chain of flatmaps and maps
+```scala
+  val alternativePairs = for {
+      number <- List(1,2,3)
+      letter <- List('a','b','c')
+  } yield s"$number-$letter" // equivalent to the map flatmap chain above
+  // resolves to List(1-a , 1-b , 1-c , 2-a, 2-b , 2-c) .....
+```
+### Collections
+- List prepend and append operators
+  * prepend use :: or +:
+  * append use List :+
+```scala
+  val aList = List(1,2,3,4)
+  val firstElement = aList.head
+  val rest = aList.tail
+  val aPrependedList = 0 :: aList // List(0,1,2,3,4)
+  val anExtendedList = 0 +: aList :+ 5 // List(0,1,2,3,4,5)
+```  
+- Sequences
+  * Allows you to access an element at an index
+```scala
+  val aSequence: Seq[Int] = Seq(1,2,3)
+  val accessedElement = aSequence(0) // returns Int(1)
+```
+- Vectors - same as sequence but with very fast access time
+```scala
+  val aVector = Vector(1,2,3)
+  val accessedVectorElement = aVector(0) // returns Int(1)
+```
+- Sets
+  * A list with no duplicates
+  * Main usecase of a set -> check if it contains value
+  * Elements can be added to a set using + and removed using minus
+  * Order is not maintained in sets
+```scala
+  val aSet = Set(1,2,3,4,1,2,3) // returns Set(1,2,3,4)
+  val setHas5 = aSet.contains(5) // Check if set has value -> true or false
+  val aListWithDuplicates = List(1,2,3,4,5,1,2,3,4)
+  val listNoDuplicates = aListWithDuplicates.toSet.toList.sorted
+  val addedSet = aSet + 6 // Set(1,2,3,4,5,6) // same as aSet.+(6)
+  val removedSet = aSet - 6
+```
+- Ranges
+  * Fictitious list for a range
+```scala
+  val aRange = Range.inclusive(1, 1000)
+  val aRange2 = 1 to 1000 // Same as inclusive
+  val twoByTwo = aRange.map(x => 2 * x).toList // List(2,4,6,8,....2000)
+```
+- Tuples
+  * Useful for grouping info under on var
+```scala
+  val aTuple = ("Bon Jovi","Rock",1982)
+  val aTuple2 = "Bon Jovi" -> 1982 // two member tuple
+```
+- Maps
+  * A map stores tuples
+  * A tuple can be constructed with val1 -> val2 = (val1, val2)
+```scala
+  val aPhoneBook: Map[String, Int] = Map(
+  ("Graham",12345678),
+  "SomeOneElse" -> 12345897 // two member tuple shorthand
+)
+```
+
+
+
+
