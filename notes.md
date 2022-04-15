@@ -425,6 +425,70 @@ val reversedList = myList.reverse // New copy of the object
 )
 ```
 
+## Part 5 - Pattern Matching
+- [Code](src/main/scala/com/rockthejvm/PatternMatching.scala)
+- Switch expression
+  * Some value match {case ...}
+  * Default case denoted by _
+  * Pattern match is an expression
+```scala
+  val anInteger = 55
+  val order = anInteger match {
+    case 1 => "first"
+    case 2 => "second"
+    case 3 => "third"
+    case _ => anInteger+"th" // default case
+  }
+```
+- match can deconstruct case classes
+  * a case doesn't have to match against a definitive value
+  * It matches against a structure (case class)
+  * Only available for case classes (for now)
+```scala
+  case class Person(name:String,age:Int)
+  val graham = Person("Graham",32)
+  val personGreeting = graham match {
+    case Person(name, age) => s"Hello $name"
+    case _ => "Not a person"
+  }
+```
+- Deconstructing tuples in pattern match
+```scala
+  val aTuple = ("Bon Jovi", "Rock")
+  val bandDescription = aTuple match{
+    case (a, b) => s"$a is a $b band"
+  }
+  println(bandDescription)
 
+  var matchTest = (myTuple:Any) => {
+    myTuple match{
+      case (name:String, genre:String, year:Int) => s"$name is a $genre band started in $year"
+      case (name:String, genre:String) => s"$name is a $genre band, and we have no idea when they stared"
+      case _ => "I have no idea what you are talking about"
+    }
+  }
+```
+- Deconstructing lists in pattern match
+  * use _ as placeholder for "anything"
+```scala
+  val aList = List(1,2,3)
+  val listDescription = aList match {
+    case  List(_,2,_) => "List containing 2 at the second position"
+    case _ => "No match"
+  }
+```
+- If there is no default case _ , an error will be thrown
+- Types can also be used in pattern matching
+```scala
+var matchByType = (argument:Any) =>{
+    argument match {
+      case List(_:String,_:Int,_:String) => "Matched a list with string, integer, string"
+      case List(_:Int,_:Int,_:Int) => "Matched a list with three integer members"
+      case _ => "Not matching anything"
+    }
+  }
+  println(matchByType(List("abc",3,"cde")))
+  println(matchByType(List(1,2,3)))
+```
 
 
